@@ -14,6 +14,7 @@ class Computed extends Observable {
 
     this.getFunction = (what) => {
       if(this.values.has(what)) {
+        this.nextSources.set(what,true)
         return this.values.get(what)
       }
       if(what.observe) {

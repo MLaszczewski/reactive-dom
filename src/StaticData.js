@@ -6,13 +6,22 @@ class StaticData {
   }
   
   observable(name) {
-    return Observable(this.data[name])
+    var data = this.data[name]
+    if(data.observe) return data
+    if(data.then) return data
+    return Observable(data)
   }
   
   get(name) {
+    var data = this.data[name]
+    if(data.then) return data
     return new Promise(
-      (resolve, reject) => resolve(this.data[name])
+      (resolve, reject) => resolve(data)
     )
+  }
+
+  dispose() {
+    
   }
 }
 

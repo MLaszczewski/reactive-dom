@@ -1,12 +1,12 @@
 var Observable = require("./Observable.js")
 
-
 class DataAccess {
-  constructor(stateless, sources, cacheData) {
-    this.sources = new Map(sources || [])
+  constructor(stateless, cacheData, sessionId) {
+    this.sources = new Map()
     this.cache = new Map(cacheData)
     this.observations = new Map()
     this.stateless = stateless
+    this.sessionId = sessionId
   }
 
   registerSource(name, dataSource) {
@@ -44,6 +44,21 @@ class DataAccess {
   
   cacheData() {
     return Array.from(this.cache.entries())
+  }
+
+  dispose() {
+    for(let source of this.sources.values()) {
+      source.dispose()
+    }
+  }
+
+  request(sourceName, path, ...args) {
+    var source = this.sources.get(sourceName)
+    source.request(path, ...args)
+  }
+  event(sourceName, path, ...args) {
+    var source = this.sources.get(sourceName)
+    source.event(path, ...args)
   }
 
 }

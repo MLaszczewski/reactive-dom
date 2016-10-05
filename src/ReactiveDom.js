@@ -76,15 +76,22 @@ function computed(compute) {
   }
 }
 
-var createDAO = function(initialState) {
-  return new DataAccess(settings.stateless, initialState)
+var createDAO = function(initialState, sessionId) {
+  return new DataAccess(settings.stateless, initialState, sessionId)
+}
+
+var prepareData = function(data) {
+  return new StaticData(data)
 }
 
 exports.computed = computed
 exports.renderHtmlOutputList = Element.renderHtmlOutputList
 exports.flattenOutputList = outputList.flatten
 exports.createDAO = createDAO
+exports.prepareData = prepareData
 exports.Component = Component
 exports.RawComponent = RawComponent
 exports.StaticData = StaticData
+exports.Observable = Observable
+exports.Computed = Computed
 exports.Router = Router

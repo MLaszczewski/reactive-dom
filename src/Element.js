@@ -26,9 +26,10 @@ class ElementsObservable {
       if(this.finished) return;
       if(this.child) this.child.dispose()
       this.child = initializeChild(value)
-      if(this.parent) { // Update Dom!
+      if(this.parent && this.child) { // Update Dom!
         this.child.initializeDom(this)
-        this.parent.handleChildUpdate(this, [/* elements removed in dispose call */], this.child.elements)
+        this.parent.handleChildUpdate(this, [/* elements removed in dispose all */], this.child.elements)
+        this.child.display()
       }
     }
     if(this.observable.observe) this.observable.observe(this.observer)
@@ -46,7 +47,7 @@ class ElementsObservable {
   }
 
   display() {
-    this.child.display()
+    if(this.child) this.child.display()
   }
 
   dispose() {
