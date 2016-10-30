@@ -15,7 +15,7 @@ class DataAccess {
 
   observable(sourceName, path) {
     var source = this.sources.get(sourceName)
-    var cacheKey = [sourceName, path]
+    var cacheKey = JSON.stringify([sourceName, path])
     if(this.stateless) {
       if(this.cache.has(cacheKey)) return this.cache.get(cacheKey)
       var promise = source.get(path)
@@ -26,13 +26,17 @@ class DataAccess {
     } else {
       if(this.observations.has(cacheKey)) return this.observations.get(cacheKey)
       var observable = source.observable(path)
+      //console.log("CACHE TEST",cacheKey,this.cache,this.cache.has(cacheKey))
       if(this.cache.has(cacheKey)) {
-        var cachedObservable = new Observable(this.cache.get(cacheKey))
+        var cachedObservable = new Observable()
         var observer = (newValue) => {
           cachedObservable.update(newValue)
           this.observations.set(cacheKey, observable)
         }
         observable.observe(observer)
+        cachedObservable.update(this.cache.get(cacheKey))
+        //console.log("CACHE HAS",cacheKey)
+        //cachedObservable.observe(d => console.log("CACHE RES",d))
         this.observations.set(cacheKey, cachedObservable)
         return cachedObservable
       } else {
