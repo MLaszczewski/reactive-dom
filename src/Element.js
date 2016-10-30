@@ -123,7 +123,9 @@ class Element {
     this.element = document.createElement(this.tagName)
     if(this.attributes) {
       var setAttribute = (name,value) => {
-        if(name.slice(0,2)=='on') {
+        if(name == 'innerHTML') {
+          this.element.innerHTML = value
+        } else if(name.slice(0,2)=='on') {
           //var eventName = name.slice(2)
           //this.element.addEventListener(eventName,value)
           this.element[name]=value
@@ -179,6 +181,7 @@ class Element {
       attributeName => {
         if(attributeName.slice(0,2)=='on') return [];
         var attributeValue = this.attributes[attributeName]
+        if(attributeName=='innerHTML') return [];
         if((typeof attributeValue == 'object') && attributeValue.then) {
           return attributeValue.then(value => {
             return [attributeName, '="', value, '"']
@@ -188,7 +191,12 @@ class Element {
         }
       }
     )
-    var children = this.children.map(renderChildHtmlOutputList)     
+    var children = this.children.map(renderChildHtmlOutputList)
+    if(this.attributes && this.attributes.innerHTML) return [
+      "<", this.tagName, attributes ? [" ",attributes] : "", ">",
+      this.attributes.innerHTML,
+      "</", this.tagName, ">"
+    ]
     return (children && children.length > 0 || !canBeSelfClosed(this.tagName)) ? [
       "<", this.tagName, attributes ? [" ",attributes] : "", ">",
         children,
