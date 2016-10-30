@@ -1,5 +1,8 @@
 var RawComponent = require("./RawComponent.js")
 
+var voidElements = ['area','base','br','col','embed','hr','img','input','keygen','link','menuitem','meta','param',
+  'source','track','wbr']
+
 class TextNode {
   constructor(text) {
     this.text = text
@@ -85,8 +88,8 @@ function initializeChild(child) {
 }
 
 function canBeSelfClosed(tagName) {
-  if(tagName == 'script') return false
-  return true
+  if(voidElements.indexOf(tagName)!=-1) return true;
+  return false
 }
 
 function renderChildHtmlOutputList(child) {
@@ -157,6 +160,7 @@ class Element {
       child.elements.forEach(element => this.element.appendChild(element))
     }
     
+    console.log("ELEMENT",this.element)
     this.elements = [this.element]
 
   }
@@ -184,25 +188,25 @@ class Element {
         if(attributeName=='innerHTML') return [];
         if((typeof attributeValue == 'object') && attributeValue.then) {
           return attributeValue.then(value => {
-            return [attributeName, '="', value, '"']
+            return [" ",attributeName, '="', value, '"']
           })
         } else {
-          return [attributeName, '="', attributeValue, '"']
+          return [" ",attributeName, '="', attributeValue, '"']
         }
       }
     )
     var children = this.children.map(renderChildHtmlOutputList)
     if(this.attributes && this.attributes.innerHTML) return [
-      "<", this.tagName, attributes ? [" ",attributes] : "", ">",
+      "<", this.tagName, attributes ? attributes : "", ">",
       this.attributes.innerHTML,
       "</", this.tagName, ">"
     ]
     return (children && children.length > 0 || !canBeSelfClosed(this.tagName)) ? [
-      "<", this.tagName, attributes ? [" ",attributes] : "", ">",
+      "<", this.tagName, attributes ? attributes : "", ">",
         children,
       "</", this.tagName, ">"
     ] : [
-      "<", this.tagName, attributes ? [" ",attributes] : "", " />",
+      "<", this.tagName, attributes ? attributes : "", " />",
     ]
   }
 
