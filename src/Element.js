@@ -25,7 +25,7 @@ class ElementsObservable {
     this.parent = null
     this.finished = false
     this.observer = (value) => {
-      console.log("ElementsObservable v =",value)
+      //console.log("ElementsObservable v =",value)
       if(this.finished) return;
       if(this.child) this.child.dispose()
       this.child = initializeChild(value)
@@ -45,6 +45,7 @@ class ElementsObservable {
       this.elements = []
       return
     }
+    
     this.child.initializeDom(this)
     this.elements = this.child.elements
   }
@@ -67,7 +68,36 @@ class ElementsObservable {
 }
 
 class ElementsArray {
+  constructor(elements) {
+    this.sourceElements = elements.map(element => initializeChild(element) )
+    this.elements = []
+    this.parent = null
+    this.finished = false
+    this.initializedElements = []
+  }
 
+  initializeDom(parent) {
+    this.parent = parent
+    this.sourceElements.forEach(element => element.initializeDom(this))
+    this.elements = this.sourceElements.reduce((arr,element) => {
+      return arr.concat(element.elements)
+    },[])
+  }
+
+  display() {
+    this.initializedElements.forEach(element => element.display())
+  }
+
+  dispose() {
+    this.initializedElements.forEach(element => element.dispose())
+    this.finished = true
+  }
+
+  handleChildUpdate(child, removedElements, addedElements) {
+    if(child != this.child) throw new Error("Update from disposed child")
+    if(!this.parent) throw new Error("update before Dom init")
+    this.parent.handleChildUpdate(this, removedElements, addedElements)
+  }
 }
 
 function initializeChild(child) {
@@ -160,7 +190,7 @@ class Element {
       child.elements.forEach(element => this.element.appendChild(element))
     }
     
-    console.log("ELEMENT",this.element)
+   // console.log("ELEMENT",this.element)
     this.elements = [this.element]
 
   }
