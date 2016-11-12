@@ -7,6 +7,7 @@ var Component = require("./Component.js")
 var DataAccess = require("./DataAccess.js")
 var StaticData = require("./StaticData.js")
 var Router = require("./Router.js")
+var SubDataSource = require("./SubDataSource.js")
 
 var settings = {
   stateless: (typeof window === 'undefined')
@@ -98,3 +99,4 @@ exports.StaticData = StaticData
 exports.Observable = Observable
 exports.Computed = Computed
 exports.Router = Router
+exports.SubDataSource = SubDataSource
