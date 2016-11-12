@@ -25,7 +25,6 @@ class ElementsObservable {
     this.parent = null
     this.finished = false
     this.observer = (value) => {
-      //console.log("ElementsObservable v =",value)
       if(this.finished) return;
       if(this.child) this.child.dispose()
       this.child = initializeChild(value)
@@ -248,7 +247,9 @@ class Element {
 
   dispose() {
     this.initializedChildren.forEach(child => child.dispose())
+    this.initializedChildren = null
     if(this.parent) this.parent.handleChildUpdate(this, this.elements, [])
+    this.parent = null
   }
 
 

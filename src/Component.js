@@ -8,7 +8,6 @@ class Component extends RawComponent {
     this.parent = null
     this.ready = false
     this.elements = []
-    this.element = null
     this.settings = settings || {}
     this.initializedChildren = []
   }
@@ -18,19 +17,24 @@ class Component extends RawComponent {
   }
   
   initializeDom(parent) {
+    this.parent = parent
     this.templateElement = this.template()
     if(this.settings.expand) {
       this.templateElement.initializeDom(this)
-      var elementArrays = this.templateElement.initializedChildren.map(
-        child => child.elements
-      )
-      this.elements = Array.prototype.concat.apply([],elementArrays)
+      this.initializedChildren = this.templateElement.initializedChildren
+      for(var child of this.initializedChildren) {
+        if(child.parent === this.templateElement) {
+      //    console.log("CHANGE PARENT OF",child.elements[0].outerHTML,"TO",this.constructor.name)
+          child.parent = this
+        }
+      }
     } else {
       this.templateElement.initializeDom(this)
-      this.elements = [this.templateElement.element]
+      this.initializedChildren = [this.templateElement]
     }
-    this.element = this.elements[0]
-    this.parent = parent
+    this.elements = Array.prototype.concat.apply([],this.initializedChildren.map(child => child.elements))
+    //console.log("COMPONENT",this.constructor.name,"ELEMENT",this.element.outerHTML)
+    //this.parent = parent
     this.ready = true
     this.domReady()
   }
@@ -45,13 +49,15 @@ class Component extends RawComponent {
   }
 
   handleChildUpdate(child, removedElements, addedElements) {
-    if(child != this.templateElement) throw new Error("Unknown child update")
     if(this.settings.expand) {
-      this.elements = child.elements
+    //  console.log("HANDLE CHILD UPDATE",child,removedElements)
+      //this.elements = child.elements
       if(this.parent) {
+       // console.log("CHILD UPDATE PARENT HTML",this.parent.outerHTML)
         this.parent.handleChildUpdate(child, removedElements, addedElements)
       } 
     } else {
+      if(child != this.templateElement) throw new Error("Unknown child update")
       // only on dispose, no action needed
     }
   }
@@ -67,7 +73,12 @@ class Component extends RawComponent {
   }
   
   dispose() {
-    this.templateElement.dispose()
+   // console.log("DISPOSE COMPONENT",this.constructor.name,"IN",this.parent.elements[0].outerHTML)
+    if(!this.settings.expand) {
+      this.templateElement.dispose()
+    } else {
+      for(var element of this.templateElement.initializedChildren) element.dispose();
+    }
     if(this.parent && !this.settings.expand) this.parent.handleChildUpdate(this, this.elements, [])
   }
   
