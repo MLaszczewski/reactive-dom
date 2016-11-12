@@ -7,11 +7,11 @@ class SubDataSource {
   }
 
   observable(name) {
-    return this.dataSource.observable(prefix.concat(name))
+    return this.dataSource.observable(this.prefix.concat(name))
   }
 
   get(name) {
-    return this.dataSource.get(prefix.concat(name))
+    return this.dataSource.get(this.prefix.concat(name))
   }
 
   dispose() {
