@@ -76,8 +76,10 @@ function computed(compute) {
   }
 }
 
-var createDAO = function(initialState, sessionId) {
-  return new DataAccess(settings.stateless, initialState, sessionId)
+var createDAO = function(initialState, sessionId, options) {
+  var stateless = settings.stateless
+  if(options.hasOwnProperty('stateless')) stateless = options.stateless
+  return new DataAccess(stateless, initialState, sessionId)
 }
 
 var prepareData = function(data) {
