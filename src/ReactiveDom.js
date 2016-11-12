@@ -77,6 +77,7 @@ function computed(compute) {
 }
 
 var createDAO = function(initialState, sessionId, options) {
+  options = options || {}
   var stateless = settings.stateless
   if(options.hasOwnProperty('stateless')) stateless = options.stateless
   return new DataAccess(stateless, initialState, sessionId)
