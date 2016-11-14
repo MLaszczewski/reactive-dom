@@ -8,6 +8,7 @@ class Component extends RawComponent {
     this.parent = null
     this.ready = false
     this.elements = []
+    this.element = null
     this.settings = settings || {}
     this.initializedChildren = []
   }
@@ -33,8 +34,7 @@ class Component extends RawComponent {
       this.initializedChildren = [this.templateElement]
     }
     this.elements = Array.prototype.concat.apply([],this.initializedChildren.map(child => child.elements))
-    //console.log("COMPONENT",this.constructor.name,"ELEMENT",this.element.outerHTML)
-    //this.parent = parent
+    this.element = this.elements[0];
     this.ready = true
     this.domReady()
   }
