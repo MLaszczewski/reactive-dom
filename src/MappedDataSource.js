@@ -13,6 +13,10 @@ class MappedDataSource {
   get(name) {
     return this.dataSource.get(this.mapFunction(name))
   }
+  
+  request(name, ...args) {
+    return this.dataSource.request(this.mapFunction(name), ...args)
+  }
 
   dispose() {
   }
