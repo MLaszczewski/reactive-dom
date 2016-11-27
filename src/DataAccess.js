@@ -58,7 +58,7 @@ class DataAccess {
 
   request(sourceName, path, ...args) {
     var source = this.sources.get(sourceName)
-    source.request(path, ...args)
+    return source.request(path, ...args)
   }
   event(sourceName, path, ...args) {
     var source = this.sources.get(sourceName)
